@@ -10,6 +10,6 @@ import { SearchPageComponent } from './pages';
   styleUrl: './app.component.scss',
 })
 export class AppComponent {
-  title = 'phoga-front-client';
+  title = 'phoga-client';
   constructor() {}
 }

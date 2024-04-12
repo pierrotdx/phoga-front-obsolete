@@ -8,7 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "build:shared": "ng build phoga-shared",
-    "start:client": "npm run build:shared && npm start phoga-front-client"
+    "start:client": "npm run build:shared && npm start phoga-client"
   },
   "private": true,
   "dependencies": {

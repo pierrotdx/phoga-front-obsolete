@@ -3,35 +3,33 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "phoga-front-client": {
+    "phoga-client": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
           "style": "scss"
         }
       },
-      "root": "projects/phoga-front-client",
-      "sourceRoot": "projects/phoga-front-client/src",
+      "root": "projects/phoga-client",
+      "sourceRoot": "projects/phoga-client/src",
       "prefix": "app",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/phoga-front-client",
-            "index": "projects/phoga-front-client/src/index.html",
-            "browser": "projects/phoga-front-client/src/main.ts",
-            "polyfills": [
-              "zone.js"
-            ],
-            "tsConfig": "projects/phoga-front-client/tsconfig.app.json",
+            "outputPath": "dist/phoga-client",
+            "index": "projects/phoga-client/src/index.html",
+            "browser": "projects/phoga-client/src/main.ts",
+            "polyfills": ["zone.js"],
+            "tsConfig": "projects/phoga-client/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
-              "projects/phoga-front-client/src/favicon.ico",
-              "projects/phoga-front-client/src/assets"
+              "projects/phoga-client/src/favicon.ico",
+              "projects/phoga-client/src/assets"
             ],
             "styles": [
               "@angular/material/prebuilt-themes/indigo-pink.css",
-              "projects/phoga-front-client/src/styles.scss"
+              "projects/phoga-client/src/styles.scss"
             ],
             "scripts": []
           },
@@ -57,8 +55,8 @@
               "sourceMap": true,
               "fileReplacements": [
                 {
-                  "replace": "projects/phoga-front-client/src/environments/environment.ts",
-                  "with": "projects/phoga-front-client/src/environments/environment.development.ts"
+                  "replace": "projects/phoga-client/src/environments/environment.ts",
+                  "with": "projects/phoga-client/src/environments/environment.development.ts"
                 }
               ]
             }
@@ -69,10 +67,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "phoga-front-client:build:production"
+              "buildTarget": "phoga-client:build:production"
             },
             "development": {
-              "buildTarget": "phoga-front-client:build:development"
+              "buildTarget": "phoga-client:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -80,25 +78,20 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "phoga-front-client:build"
+            "buildTarget": "phoga-client:build"
           }
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
-            "tsConfig": "projects/phoga-front-client/tsconfig.spec.json",
+            "polyfills": ["zone.js", "zone.js/testing"],
+            "tsConfig": "projects/phoga-client/tsconfig.spec.json",
             "inlineStyleLanguage": "scss",
             "assets": [
-              "projects/phoga-front-client/src/favicon.ico",
-              "projects/phoga-front-client/src/assets"
+              "projects/phoga-client/src/favicon.ico",
+              "projects/phoga-client/src/assets"
             ],
-            "styles": [
-              "projects/phoga-front-client/src/styles.scss"
-            ],
+            "styles": ["projects/phoga-client/src/styles.scss"],
             "scripts": []
           }
         }
@@ -129,10 +122,7 @@
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "tsConfig": "projects/phoga-shared/tsconfig.spec.json",
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ]
+            "polyfills": ["zone.js", "zone.js/testing"]
           }
         }
       }

@@ -14,6 +14,11 @@
     "declaration": false,
     "experimentalDecorators": true,
     "moduleResolution": "node",
+    "paths": {
+      "phoga-shared": [
+        "./dist/phoga-shared"
+      ]
+    },
     "importHelpers": true,
     "target": "ES2022",
     "module": "ES2022",

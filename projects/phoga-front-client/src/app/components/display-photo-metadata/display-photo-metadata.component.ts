@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { PhotoMetadata } from '../../models';
+import { PhotoMetadata } from 'phoga-shared';
 import { ReplaySubject, Subscription } from 'rxjs';
 import { PhotosService } from '../../services';
 

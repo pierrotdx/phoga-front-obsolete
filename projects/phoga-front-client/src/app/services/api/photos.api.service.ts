@@ -5,9 +5,7 @@ import {
   PhotoFormatOptions,
   PhotoMetadata,
   PhotoMetadataFilter,
-} from '../../models/api';
-import { firstValueFrom, map, tap } from 'rxjs';
-import { CacheService } from '../cache.service';
+} from '../../../../../phoga-shared/src/lib/models/api';
 
 @Injectable({
   providedIn: 'root',

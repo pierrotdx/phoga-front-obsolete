@@ -1,13 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, ReplaySubject, Subscription, first } from 'rxjs';
-import { PhotoMetadata } from '../../models';
+import { BehaviorSubject, ReplaySubject, Subscription } from 'rxjs';
+import { PhotoMetadata } from 'phoga-shared';
 import { PhotosService } from '../../services';
 import { CommonModule } from '@angular/common';
-import {
-  DisplayPhotoMetadataComponent,
-  DisplayPhotoComponent,
-} from '../../components';
+import { DisplayPhotoComponent } from '../../components';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 

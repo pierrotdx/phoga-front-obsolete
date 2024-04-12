@@ -4,7 +4,7 @@ import {
   PhotoMetadata,
   PhotoMetadataFilter,
   SearchCacheItem,
-} from '../models';
+} from 'phoga-shared';
 import { Cache } from './cache.class';
 import { equals } from 'ramda';
 

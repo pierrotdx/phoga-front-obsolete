@@ -8,7 +8,7 @@ import {
   firstValueFrom,
   tap,
 } from 'rxjs';
-import { PhotoMetadata, PhotoMetadataFilter } from '../../models';
+import { PhotoMetadata, PhotoMetadataFilter } from 'phoga-shared';
 import { DisplayPhotoComponent } from '../../components';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';

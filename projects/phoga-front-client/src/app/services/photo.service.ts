@@ -4,7 +4,7 @@ import {
   PhotoImage,
   PhotoMetadata,
   PhotoMetadataFilter,
-} from '../models';
+} from 'phoga-shared';
 import { PhotosApiService } from './api';
 import { firstValueFrom, of, tap } from 'rxjs';
 import { CacheService } from './cache.service';

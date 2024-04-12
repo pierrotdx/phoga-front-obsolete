@@ -4,7 +4,7 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ReplaySubject, Subscription } from 'rxjs';
-import { PhotoFormatOptions, PhotoMetadata } from '../../models';
+import { PhotoFormatOptions, PhotoMetadata } from 'phoga-shared';
 import { PhotosService } from '../../services';
 import { CdkPortal } from '@angular/cdk/portal';
 import { DisplayPhotoMetadataComponent } from '../display-photo-metadata/display-photo-metadata.component';

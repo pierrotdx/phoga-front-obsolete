@@ -1,4 +1,4 @@
-import { CacheInterface } from '../models';
+import { CacheInterface } from 'phoga-shared';
 import { BehaviorSubject } from 'rxjs';
 
 export class Cache<T> implements CacheInterface<T> {

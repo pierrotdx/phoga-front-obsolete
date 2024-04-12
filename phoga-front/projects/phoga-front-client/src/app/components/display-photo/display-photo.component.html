@@ -1,0 +1,35 @@
+<div>
+  @if (photoMetadata) { @if (photo$ | async; as photo) {
+  <ng-container
+    [ngTemplateOutlet]="photoTemplate"
+    [ngTemplateOutletContext]="{ title: title$ | async }"
+  ></ng-container>
+  } @else {
+  <span>
+    <em>{{ photoMetadata.titles?.[0] || "image" }}</em> loading
+  </span>
+  <mat-spinner></mat-spinner>
+  } } @else {
+  <ng-container [ngTemplateOutlet]="noPhotoTemplate"></ng-container>
+  }
+</div>
+
+<!-- Photo template -->
+<ng-template #photoTemplate let-title="title">
+  @if (photo$ | async; as photo) {
+  <img [src]="photo" [alt]="title" [matTooltip]="title" />
+  <lib-display-photo-metadata
+    *ngIf="showMetadata"
+    [photoMetadata]="photoMetadata"
+  >
+  </lib-display-photo-metadata>
+  } @else {
+  <span>
+    <em>{{ title }}</em> loading
+  </span>
+  <mat-spinner></mat-spinner>
+  }
+</ng-template>
+
+<!-- No-photo template -->
+<ng-template #noPhotoTemplate>nothing to show</ng-template>

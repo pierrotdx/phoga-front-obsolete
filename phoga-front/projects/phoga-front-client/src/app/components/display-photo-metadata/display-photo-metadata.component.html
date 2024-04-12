@@ -1,0 +1,19 @@
+<div *ngIf="photoMetadata?.titles">
+  <mat-icon>title</mat-icon>
+  {{ title$ | async }}
+</div>
+<div *ngIf="photoMetadata?.description">
+  <mat-icon>description</mat-icon>
+  {{ photoMetadata?.description }}
+</div>
+<div *ngIf="photoMetadata?.date">
+  <mat-icon>calendar_month</mat-icon>
+  {{ photoMetadata?.date | date : "YYYY/MM/dd" }}
+</div>
+<div *ngIf="photoMetadata?.geoLocation" style="display: flex">
+  <mat-icon>location_on</mat-icon>
+  <div>
+    <div>long: {{ photoMetadata?.geoLocation?.longitude }}</div>
+    <div>lat: {{ photoMetadata?.geoLocation?.latitude }}</div>
+  </div>
+</div>

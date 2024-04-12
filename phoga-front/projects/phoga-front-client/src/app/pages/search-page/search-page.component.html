@@ -1,0 +1,10 @@
+@for(photoMetadata of photosMetadata$ | async; track photoMetadata) {
+<a
+  [routerLink]="anchorLinks[photoMetadata._id]"
+  [state]="photoMetadata"
+  routerLinkActive
+  ariaCurrentWhenActive="page"
+>
+  <lib-display-photo [photoMetadata]="photoMetadata"></lib-display-photo>
+</a>
+} @empty { <mat-spinner></mat-spinner> }

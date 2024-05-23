@@ -1,9 +1,14 @@
 import { Route, Routes } from '@angular/router';
-import { EditPhotoPageComponent } from './pages';
+import { EditGalleryPageComponent, EditPhotoPageComponent } from './pages';
 
-const editPhotoPageRoute: Route = {
+const editGalleryPageRoute: Route = {
   path: '',
+  component: EditGalleryPageComponent,
+};
+
+const addPhotoPageRoute: Route = {
+  path: 'add',
   component: EditPhotoPageComponent,
 };
 
-export const routes: Routes = [editPhotoPageRoute];
+export const routes: Routes = [editGalleryPageRoute, addPhotoPageRoute];

@@ -1,11 +1,15 @@
 import { DbDoc } from './db.model';
 import { FilterParams } from './search-params.model';
 
+export type PhotoGeoLocation = Partial<
+  Pick<GeolocationCoordinates, 'latitude' | 'longitude'>
+>;
+
 export interface PhotoMetadata extends DbDoc {
   filename?: string;
   date?: Date;
   description?: string;
-  geoLocation?: Pick<GeolocationCoordinates, 'latitude' | 'longitude'>;
+  geoLocation?: PhotoGeoLocation;
   titles?: string[];
 }
 

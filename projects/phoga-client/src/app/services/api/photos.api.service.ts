@@ -5,7 +5,7 @@ import {
   PhotoFormatOptions,
   PhotoMetadata,
   PhotoMetadataFilter,
-} from '../../../../../phoga-shared/src/lib/models/api';
+} from 'phoga-shared';
 
 @Injectable({
   providedIn: 'root',

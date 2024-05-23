@@ -21,7 +21,6 @@ import { DisplayPhotoMetadataComponent } from '../display-photo-metadata/display
     OverlayModule,
   ],
   templateUrl: './display-photo.component.html',
-  styleUrl: './display-photo.component.scss',
 })
 export class DisplayPhotoComponent implements OnInit, OnDestroy {
   private _photoMetadata: PhotoMetadata | undefined;

@@ -1,3 +1,9 @@
-import { Routes } from '@angular/router';
+import { Route, Routes } from '@angular/router';
+import { EditPhotoPageComponent } from './pages';
 
-export const routes: Routes = [];
+const editPhotoPageRoute: Route = {
+  path: '',
+  component: EditPhotoPageComponent,
+};
+
+export const routes: Routes = [editPhotoPageRoute];

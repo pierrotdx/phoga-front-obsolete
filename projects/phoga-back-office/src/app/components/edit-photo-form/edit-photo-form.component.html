@@ -1,0 +1,77 @@
+<form (ngSubmit)="onSubmit()" #editPhotoForm="ngForm">
+  <label for="image">
+    Image
+    <input
+      (change)="onImageInputChange($event)"
+      type="file"
+      name="image"
+      accept="image/jpeg"
+    />
+  </label>
+  <div (click)="toggleImage()">
+    <img
+      *ngIf="(showImage$ | async) && (image$ | async) as image"
+      [src]="image"
+      alt="image should be displayed here"
+    />
+    <img
+      *ngIf="
+        (showImage$ | async) === false && (thumbnail$ | async) as thumbnail
+      "
+      [src]="thumbnail"
+      alt="thumbnail should be displayed here"
+    />
+  </div>
+  <div>
+    <label for="photoDateCtrlId">Date</label>
+    <input
+      type="date"
+      name="photoDateCtrlName"
+      id="photoDateCtrlId"
+      [(ngModel)]="photoDate"
+    />
+  </div>
+  <div>
+    <div>
+      <label for="photoLatitudeCtrlId">Latitude</label>
+      <input
+        type="number"
+        id="photoLatitudeCtrlId"
+        name="photoLatitudeCtrlName"
+        [(ngModel)]="photoGeoLocation.latitude"
+      />
+    </div>
+    <div ngModelGroup="photoGeoLocation">
+      <label for="photoLatitudeCtrlId"> Longitude </label>
+      <input
+        type="number"
+        id="photoLongitudeCtrlId"
+        name="photoLongitudeCtrlName"
+        [(ngModel)]="photoGeoLocation.longitude"
+      />
+    </div>
+  </div>
+  <div ngModelGroup="photoTitles">
+    <div>Titles <button (click)="addTitle()">+</button></div>
+    <div *ngFor="let title of photoTitles; index as i; trackBy: titleTracker">
+      <label for="{{ 'photoTitleCtrlId-' + i }}">Title #{{ i }}</label>
+      <input
+        type="text"
+        id="{{ 'photoTitleCtrlId-' + i }}"
+        name="{{ 'photoTitleCtrlName-' + i }}"
+        [(ngModel)]="photoTitles[i]"
+      />
+      <button (click)="removeTitle(i)">-</button>
+    </div>
+  </div>
+  <div>
+    <label for="photoDescriptionCtrlId">Description</label>
+    <textarea
+      id="photoDescriptionCtrlId"
+      name="photoDescriptionCtrlName"
+      [(ngModel)]="photoDescription"
+    >
+    </textarea>
+  </div>
+  <button type="submit">submit</button>
+</form>

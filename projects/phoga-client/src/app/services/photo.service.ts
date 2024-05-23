@@ -8,6 +8,7 @@ import {
 import { PhotosApiService } from './api';
 import { firstValueFrom, of, tap } from 'rxjs';
 import { CacheService } from './cache.service';
+import { PhotoUtilsService } from 'phoga-shared';
 
 @Injectable({
   providedIn: 'root',
@@ -15,6 +16,7 @@ import { CacheService } from './cache.service';
 export class PhotosService {
   constructor(
     private readonly cacheService: CacheService,
+    private readonly photoUtilsService: PhotoUtilsService,
     private readonly photosApiService: PhotosApiService
   ) {}
 
@@ -60,29 +62,11 @@ export class PhotosService {
     const imageBuffer = await firstValueFrom(
       this.photosApiService.getImageBuffer(photoId, format)
     );
-    const image = await this.getImagePromise(imageBuffer);
+    const image = await this.photoUtilsService.getImagePromise(imageBuffer);
     const photoImage: PhotoImage = { _id: photoId, format, image };
     this.cacheService.photoImageCache.add(photoImage);
     return image;
   };
-
-  private readonly getImagePromise = (
-    photoBuffer: ArrayBuffer
-  ): Promise<string> =>
-    new Promise(function (resolve, reject) {
-      if (!photoBuffer) {
-        reject(new Error('no buffer provided in input'));
-      }
-      const fileReader = new FileReader();
-      const blob = new Blob([photoBuffer]);
-      fileReader.onloadend = () => {
-        resolve(fileReader.result as string);
-      };
-      fileReader.onerror = (err) => {
-        reject(err);
-      };
-      fileReader.readAsDataURL(blob);
-    });
 
   public readonly getTitle = (titles?: string[]) =>
     titles?.map((title) => `"${title}"`)?.join(', ');

@@ -1,18 +1,19 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { PhotoMetadata } from 'phoga-shared';
+import { PhotoMetadata } from '../../models';
 import { ReplaySubject, Subscription } from 'rxjs';
-import { PhotosService } from '../../services';
+import { GetPhotoTitle } from '../../../public-api';
 
 @Component({
   selector: 'lib-display-photo-metadata',
   standalone: true,
   imports: [CommonModule, MatIconModule],
   templateUrl: './display-photo-metadata.component.html',
-  styleUrl: './display-photo-metadata.component.scss',
 })
 export class DisplayPhotoMetadataComponent implements OnInit, OnDestroy {
+  @Input() getTitle: GetPhotoTitle | undefined;
+
   private _photoMetadata: PhotoMetadata | undefined;
   @Input() set photoMetadata(value: PhotoMetadata | undefined) {
     this._photoMetadata = value;
@@ -29,8 +30,6 @@ export class DisplayPhotoMetadataComponent implements OnInit, OnDestroy {
   public readonly title$ = new ReplaySubject<string | undefined>();
 
   private readonly subs: Subscription[] = [];
-
-  constructor(private readonly photosService: PhotosService) {}
 
   ngOnInit(): void {
     const photoMetadataSub = this.photoMetadata$.subscribe(
@@ -51,7 +50,7 @@ export class DisplayPhotoMetadataComponent implements OnInit, OnDestroy {
     if (!photoMetadata) {
       return;
     }
-    const title = this.photosService.getTitle(photoMetadata.titles);
+    const title = this.getTitle ? this.getTitle(photoMetadata) : '';
     this.title$.next(title);
   };
 }

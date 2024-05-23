@@ -1,10 +1,7 @@
-@for(photoMetadata of photosMetadata$ | async; track photoMetadata) {
-<a
-  [routerLink]="anchorLinks[photoMetadata._id]"
-  [state]="photoMetadata"
-  routerLinkActive
-  ariaCurrentWhenActive="page"
+<lib-gallery
+  [fetchPhotosMetadata]="fetchPhotosMetadata"
+  [getPhotoRedirectLink]="getPhotoRedirectLink"
+  [getImage]="getImage"
+  [getTitle]="getTitle"
 >
-  <lib-display-photo [photoMetadata]="photoMetadata"></lib-display-photo>
-</a>
-} @empty { <mat-spinner></mat-spinner> }
+</lib-gallery>

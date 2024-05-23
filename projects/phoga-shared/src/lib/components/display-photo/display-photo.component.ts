@@ -1,11 +1,21 @@
 import { OverlayModule } from '@angular/cdk/overlay';
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnDestroy,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ReplaySubject, Subscription } from 'rxjs';
-import { PhotoFormatOptions, PhotoMetadata } from 'phoga-shared';
-import { PhotosService } from '../../services';
+import {
+  GetImage,
+  GetPhotoTitle,
+  PhotoFormatOptions,
+  PhotoMetadata,
+} from '../../models';
 import { CdkPortal } from '@angular/cdk/portal';
 import { DisplayPhotoMetadataComponent } from '../display-photo-metadata/display-photo-metadata.component';
 
@@ -23,6 +33,9 @@ import { DisplayPhotoMetadataComponent } from '../display-photo-metadata/display
   templateUrl: './display-photo.component.html',
 })
 export class DisplayPhotoComponent implements OnInit, OnDestroy {
+  @Input() getImage: GetImage | undefined;
+  @Input() getTitle: GetPhotoTitle | undefined;
+
   private _photoMetadata: PhotoMetadata | undefined;
   @Input() set photoMetadata(value: PhotoMetadata | undefined) {
     this._photoMetadata = value;
@@ -56,11 +69,13 @@ export class DisplayPhotoComponent implements OnInit, OnDestroy {
   private readonly subs: Subscription[] = [];
   public readonly isLoading$ = new ReplaySubject<boolean>();
 
-  constructor(private readonly photosService: PhotosService) {}
-
   ngOnInit(): void {
     const photoSub = this.photo$.subscribe(this.afterPhotoLoaded);
     this.subs.push(photoSub);
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    void this.onPhotoMetadataChange();
   }
 
   ngOnDestroy(): void {
@@ -76,9 +91,10 @@ export class DisplayPhotoComponent implements OnInit, OnDestroy {
   };
 
   private readonly setTitle = () => {
-    const title = this.photoMetadata?.titles
-      ? this.photosService.getTitle(this.photoMetadata?.titles)
-      : undefined;
+    const title =
+      this.photoMetadata?.titles && this.getTitle
+        ? this.getTitle(this.photoMetadata)
+        : undefined;
     this.title$.next(title);
   };
 
@@ -91,13 +107,12 @@ export class DisplayPhotoComponent implements OnInit, OnDestroy {
 
   private readonly setPhoto = async () => {
     this.isLoading$.next(true);
-    const photo = this.photoMetadata?._id
-      ? await this.getPhoto(this.photoMetadata._id, this.photoFormatOptions)
-      : undefined;
+    const photo =
+      this.photoMetadata?._id && this.getImage
+        ? await this.getImage(this.photoMetadata._id, this.photoFormatOptions)
+        : undefined;
     this.photo$.next(photo);
   };
-
-  private readonly getPhoto = this.photosService.getImage;
 
   private readonly afterPhotoLoaded = () => {
     this.isLoading$.next(false);

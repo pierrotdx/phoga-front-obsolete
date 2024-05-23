@@ -1,64 +1,33 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { Component } from '@angular/core';
 import { PhotosService } from '../../services';
 import {
-  BehaviorSubject,
-  ReplaySubject,
-  Subscription,
-  firstValueFrom,
-  tap,
-} from 'rxjs';
-import { PhotoMetadata, PhotoMetadataFilter } from 'phoga-shared';
-import { DisplayPhotoComponent } from '../../components';
-import { CommonModule } from '@angular/common';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+  FetchPhotosMetadata,
+  GalleryComponent,
+  GetPhotoRedirectLink,
+  GetPhotoTitle,
+  PhotoMetadata,
+} from 'phoga-shared';
+import { GetImage } from '../../../../../phoga-shared/src/public-api';
 
 @Component({
   selector: 'app-search-page',
   standalone: true,
-  imports: [
-    CommonModule,
-    DisplayPhotoComponent,
-    MatProgressSpinnerModule,
-    RouterLink,
-    RouterLinkActive,
-  ],
+  imports: [GalleryComponent],
   templateUrl: './search-page.component.html',
   styleUrl: './search-page.component.scss',
 })
-export class SearchPageComponent implements OnInit, OnDestroy {
-  public readonly photosMetadata$ = new BehaviorSubject<PhotoMetadata[]>([]);
-  public readonly rawPhotos$ = new ReplaySubject<string[]>();
+export class SearchPageComponent {
+  public readonly fetchPhotosMetadata: FetchPhotosMetadata;
+  public readonly getPhotoRedirectLink: GetPhotoRedirectLink;
+  public readonly getImage: GetImage;
+  public readonly getTitle: GetPhotoTitle;
 
-  public anchorLinks: Record<PhotoMetadata['_id'], string> = {};
-
-  private readonly subs: Subscription[] = [];
-
-  constructor(private readonly photosService: PhotosService) {}
-
-  ngOnInit(): void {
-    void this.searchOnPhotosMetadata();
+  constructor(private readonly photosService: PhotosService) {
+    this.fetchPhotosMetadata = this.photosService.searchPhotosMetadata;
+    this.getPhotoRedirectLink = (photoMetadata: PhotoMetadata) =>
+      `${photoMetadata._id}/details`;
+    this.getImage = this.photosService.getImage;
+    this.getTitle = (photoMetadata: PhotoMetadata) =>
+      this.photosService.getTitle(photoMetadata.titles);
   }
-
-  ngOnDestroy(): void {
-    this.subs.forEach((sub) => {
-      sub.unsubscribe();
-    });
-  }
-
-  private readonly searchOnPhotosMetadata = async (
-    filter?: PhotoMetadataFilter
-  ) =>
-    await firstValueFrom(
-      this.photosService.searchPhotosMetadata(filter).pipe(
-        tap((photosMetadata) => {
-          photosMetadata.forEach((photoMetadata) => {
-            this.anchorLinks[
-              photoMetadata._id
-            ] = `${photoMetadata._id}/details`;
-          });
-          this.photosMetadata$.next(photosMetadata);
-        })
-      )
-    );
 }

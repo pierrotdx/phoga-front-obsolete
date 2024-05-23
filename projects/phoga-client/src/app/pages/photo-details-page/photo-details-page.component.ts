@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, ReplaySubject, Subscription } from 'rxjs';
-import { PhotoMetadata } from 'phoga-shared';
+import { GetImage, GetPhotoTitle, PhotoMetadata } from 'phoga-shared';
 import { PhotosService } from '../../services';
 import { CommonModule } from '@angular/common';
 import { DisplayPhotoComponent } from '../../components';
@@ -21,6 +21,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   styleUrl: './photo-details-page.component.scss',
 })
 export class PhotoDetailsPageComponent implements OnInit, OnDestroy {
+  public readonly getImage: GetImage;
+  public readonly getTitle: GetPhotoTitle;
   public readonly photoMetadata$ = new BehaviorSubject<
     PhotoMetadata | undefined
   >(undefined);
@@ -35,6 +37,9 @@ export class PhotoDetailsPageComponent implements OnInit, OnDestroy {
     private readonly photosService: PhotosService,
     private readonly router: Router
   ) {
+    this.getImage = this.photosService.getImage;
+    this.getTitle = (photoMetadata: PhotoMetadata) =>
+      this.photosService.getTitle(photoMetadata.titles);
     const photoMetadata = this.router.getCurrentNavigation()?.extras
       .state as PhotoMetadata;
     if (photoMetadata) {

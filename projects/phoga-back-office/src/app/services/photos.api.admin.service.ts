@@ -16,7 +16,6 @@ export class PhotosApiAdminService {
   createPhoto = (photo: Partial<Photo & { file: File }>) => {
     const url = new URL(`${this.apiUrl}/photos`);
     const formData = this.getFormDataToCreatePhoto(photo);
-    console.debug('sending data');
     return this.httpClient.put<unknown>(url.toString(), formData);
   };
 

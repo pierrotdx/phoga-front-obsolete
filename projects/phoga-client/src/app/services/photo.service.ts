@@ -4,11 +4,13 @@ import {
   PhotoImage,
   PhotoMetadata,
   PhotoMetadataFilter,
+  FetchPhotosMetadata,
 } from 'phoga-shared';
 import { PhotosApiService } from './api';
 import { firstValueFrom, of, tap } from 'rxjs';
 import { CacheService } from './cache.service';
 import { PhotoUtilsService } from 'phoga-shared';
+import { GetImage } from '../../../../phoga-shared/src/public-api';
 
 @Injectable({
   providedIn: 'root',
@@ -20,7 +22,9 @@ export class PhotosService {
     private readonly photosApiService: PhotosApiService
   ) {}
 
-  searchPhotosMetadata = (filter?: PhotoMetadataFilter) => {
+  searchPhotosMetadata: FetchPhotosMetadata = (
+    filter?: PhotoMetadataFilter
+  ) => {
     const cachedSearch = this.cacheService.searchPhotoMetadataCache.get({
       filter,
     });
@@ -51,7 +55,7 @@ export class PhotosService {
     return photosMetadata.find((photoMetadata) => photoMetadata._id === _id);
   };
 
-  public readonly getImage = async (
+  public readonly getImage: GetImage = async (
     photoId: PhotoMetadata['_id'],
     format?: PhotoFormatOptions
   ) => {

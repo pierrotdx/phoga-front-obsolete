@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
-import { PhotosService } from '../../services';
+import { PhotosApiService, SharedPhotosService } from '../../services';
 import {
-  FetchPhotosMetadata,
+  GetPhotosMetadata,
   GalleryComponent,
-  GetPhotoRedirectLink,
-  GetPhotoTitle,
+  GetImage,
+  GetRedirectLink,
+  GetTitle,
   PhotoMetadata,
 } from 'phoga-shared';
-import { GetImage } from '../../../../../phoga-shared/src/public-api';
 
 @Component({
   selector: 'app-search-page',
@@ -17,17 +17,23 @@ import { GetImage } from '../../../../../phoga-shared/src/public-api';
   styleUrl: './search-page.component.scss',
 })
 export class SearchPageComponent {
-  public readonly fetchPhotosMetadata: FetchPhotosMetadata;
-  public readonly getPhotoRedirectLink: GetPhotoRedirectLink;
+  public readonly getPhotosMetadata: GetPhotosMetadata;
+  public readonly getPhotoRedirectLink: GetRedirectLink;
   public readonly getImage: GetImage;
-  public readonly getTitle: GetPhotoTitle;
+  public readonly getTitle: GetTitle;
 
-  constructor(private readonly photosService: PhotosService) {
-    this.fetchPhotosMetadata = this.photosService.searchPhotosMetadata;
+  constructor(
+    private readonly photosApiService: PhotosApiService,
+    private readonly sharedPhotosService: SharedPhotosService
+  ) {
+    this.getPhotosMetadata = this.sharedPhotosService.getPhotosMetadataFactory(
+      this.photosApiService.getPhotosMetadata
+    );
     this.getPhotoRedirectLink = (photoMetadata: PhotoMetadata) =>
       `${photoMetadata._id}/details`;
-    this.getImage = this.photosService.getImage;
-    this.getTitle = (photoMetadata: PhotoMetadata) =>
-      this.photosService.getTitle(photoMetadata.titles);
+    this.getImage = this.sharedPhotosService.getImageFactory(
+      this.photosApiService.getImageBuffer
+    );
+    this.getTitle = this.sharedPhotosService.getTitle;
   }
 }

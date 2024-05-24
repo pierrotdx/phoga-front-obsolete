@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 @Injectable({
   providedIn: 'root',
 })
-export class PhotoUtilsService {
+export class SharedPhotoUtilsService {
   constructor() {}
 
   public readonly getImagePromise = (
@@ -23,4 +23,16 @@ export class PhotoUtilsService {
       };
       fileReader.readAsDataURL(blob);
     });
+
+  public readonly updateUrlWithSearchParams = <Params extends Object>(
+    url: URL,
+    params?: Params
+  ) => {
+    if (!params) {
+      return;
+    }
+    Object.entries(params).forEach(([key, value]) => {
+      url.searchParams.set(encodeURIComponent(key), encodeURIComponent(value));
+    });
+  };
 }

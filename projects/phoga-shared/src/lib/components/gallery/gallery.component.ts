@@ -1,9 +1,9 @@
 import { Component, Input } from '@angular/core';
 import {
-  FetchPhotosMetadata,
   GetImage,
-  GetPhotoRedirectLink,
-  GetPhotoTitle,
+  GetPhotosMetadata,
+  GetRedirectLink,
+  GetTitle,
   PhotoMetadata,
   PhotoMetadataFilter,
 } from '../../models';
@@ -32,10 +32,10 @@ import { DisplayPhotoComponent } from '../display-photo/display-photo.component'
   templateUrl: './gallery.component.html',
 })
 export class GalleryComponent {
-  @Input() fetchPhotosMetadata: FetchPhotosMetadata | undefined;
-  @Input() getPhotoRedirectLink: GetPhotoRedirectLink | undefined;
+  @Input() getPhotosMetadata: GetPhotosMetadata | undefined;
+  @Input() getPhotoRedirectLink: GetRedirectLink | undefined;
   @Input() getImage: GetImage | undefined;
-  @Input() getTitle: GetPhotoTitle | undefined;
+  @Input() getTitle: GetTitle | undefined;
 
   public readonly photosMetadata$ = new BehaviorSubject<PhotoMetadata[]>([]);
   public readonly rawPhotos$ = new ReplaySubject<string[]>();
@@ -59,9 +59,9 @@ export class GalleryComponent {
   private readonly searchOnPhotosMetadata = async (
     filter?: PhotoMetadataFilter
   ) =>
-    this.fetchPhotosMetadata
+    this.getPhotosMetadata
       ? await firstValueFrom(
-          this.fetchPhotosMetadata(filter).pipe(
+          this.getPhotosMetadata(filter).pipe(
             tap((photosMetadata) => {
               photosMetadata.forEach((photoMetadata) => {
                 this.anchorLinks[photoMetadata._id] = this.getPhotoRedirectLink

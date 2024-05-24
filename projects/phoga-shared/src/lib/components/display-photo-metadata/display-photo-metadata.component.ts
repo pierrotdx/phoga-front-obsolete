@@ -1,9 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { PhotoMetadata } from '../../models';
+import { GetTitle, PhotoMetadata } from '../../models';
 import { ReplaySubject, Subscription } from 'rxjs';
-import { GetPhotoTitle } from '../../../public-api';
 
 @Component({
   selector: 'lib-display-photo-metadata',
@@ -12,7 +11,7 @@ import { GetPhotoTitle } from '../../../public-api';
   templateUrl: './display-photo-metadata.component.html',
 })
 export class DisplayPhotoMetadataComponent implements OnInit, OnDestroy {
-  @Input() getTitle: GetPhotoTitle | undefined;
+  @Input() getTitle: GetTitle | undefined;
 
   private _photoMetadata: PhotoMetadata | undefined;
   @Input() set photoMetadata(value: PhotoMetadata | undefined) {

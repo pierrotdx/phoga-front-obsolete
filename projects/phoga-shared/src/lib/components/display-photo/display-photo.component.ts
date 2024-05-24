@@ -1,18 +1,12 @@
 import { OverlayModule } from '@angular/cdk/overlay';
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  Input,
-  OnDestroy,
-  OnInit,
-  SimpleChanges,
-} from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ReplaySubject, Subscription } from 'rxjs';
 import {
   GetImage,
-  GetPhotoTitle,
+  GetTitle,
   PhotoFormatOptions,
   PhotoMetadata,
 } from '../../models';
@@ -34,7 +28,7 @@ import { DisplayPhotoMetadataComponent } from '../display-photo-metadata/display
 })
 export class DisplayPhotoComponent implements OnInit, OnDestroy {
   @Input() getImage: GetImage | undefined;
-  @Input() getTitle: GetPhotoTitle | undefined;
+  @Input() getTitle: GetTitle | undefined;
 
   private _photoMetadata: PhotoMetadata | undefined;
   @Input() set photoMetadata(value: PhotoMetadata | undefined) {
@@ -74,7 +68,7 @@ export class DisplayPhotoComponent implements OnInit, OnDestroy {
     this.subs.push(photoSub);
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(): void {
     void this.onPhotoMetadataChange();
   }
 
@@ -92,7 +86,7 @@ export class DisplayPhotoComponent implements OnInit, OnDestroy {
 
   private readonly setTitle = () => {
     const title =
-      this.photoMetadata?.titles && this.getTitle
+      this.photoMetadata && this.getTitle
         ? this.getTitle(this.photoMetadata)
         : undefined;
     this.title$.next(title);

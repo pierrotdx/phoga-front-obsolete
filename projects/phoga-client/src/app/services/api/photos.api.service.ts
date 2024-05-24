@@ -1,11 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment';
+
 import {
   PhotoFormatOptions,
   PhotoMetadata,
   PhotoMetadataFilter,
+  SharedPhotoUtilsService,
 } from 'phoga-shared';
+
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -13,34 +16,24 @@ import {
 export class PhotosApiService {
   private readonly apiUrl: string;
 
-  constructor(private readonly httpClient: HttpClient) {
+  constructor(
+    private readonly httpClient: HttpClient,
+    private readonly sharedPhotoUtilsService: SharedPhotoUtilsService
+  ) {
     this.apiUrl = environment.publicApiUrl;
   }
 
-  searchPhotosMetadata = (filter?: PhotoMetadataFilter) => {
+  getPhotosMetadata = (filter?: PhotoMetadataFilter) => {
     const url = new URL(`${this.apiUrl}/photos/metadata`);
-    if (filter) {
-      Object.entries(filter).forEach(([key, value]) => {
-        url.searchParams.set(key, value);
-      });
-    }
+    this.sharedPhotoUtilsService.updateUrlWithSearchParams(url, filter);
     return this.httpClient.get<PhotoMetadata[]>(url.toString());
   };
 
   getImageBuffer = (photoId: string, formatOptions?: PhotoFormatOptions) => {
     const url = new URL(`${this.apiUrl}/photos/${photoId}`);
-    this.addFormatOptionsAsSearchParamsToUrl(url, formatOptions);
+    this.sharedPhotoUtilsService.updateUrlWithSearchParams(url, formatOptions);
     return this.httpClient.get(url.toString(), {
       responseType: 'arraybuffer',
-    });
-  };
-
-  private readonly addFormatOptionsAsSearchParamsToUrl = (
-    url: URL,
-    formatOptions?: PhotoFormatOptions
-  ): void => {
-    Object.entries(formatOptions || {}).forEach(([key, value]) => {
-      url.searchParams.set(encodeURIComponent(key), encodeURIComponent(value));
     });
   };
 }

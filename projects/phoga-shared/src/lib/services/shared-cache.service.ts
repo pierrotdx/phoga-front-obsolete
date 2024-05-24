@@ -1,17 +1,17 @@
 import { Injectable } from '@angular/core';
 import {
+  Cache,
   PhotoImage,
   PhotoMetadata,
   PhotoMetadataFilter,
   SearchCacheItem,
-} from 'phoga-shared';
-import { Cache } from './cache.class';
+} from '../models';
 import { equals } from 'ramda';
 
 @Injectable({
   providedIn: 'root',
 })
-export class CacheService {
+export class SharedCacheService {
   public readonly photoImageCache = new Cache<PhotoImage>(
     (a: PhotoImage, b: Partial<PhotoImage>) => a._id === b?._id
   );

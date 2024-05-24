@@ -1,8 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, ReplaySubject, Subscription } from 'rxjs';
-import { GetImage, GetPhotoTitle, PhotoMetadata } from 'phoga-shared';
-import { PhotosService } from '../../services';
+import { GetImage, GetTitle, PhotoMetadata } from 'phoga-shared';
+import { PhotosApiService, SharedPhotosService } from '../../services';
 import { CommonModule } from '@angular/common';
 import { DisplayPhotoComponent } from '../../components';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -11,18 +11,13 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 @Component({
   selector: 'app-photo-details-page',
   standalone: true,
-  imports: [
-    CommonModule,
-    DisplayPhotoComponent,
-    MatTooltipModule,
-    MatProgressSpinnerModule,
-  ],
+  imports: [CommonModule, DisplayPhotoComponent, MatProgressSpinnerModule],
   templateUrl: './photo-details-page.component.html',
   styleUrl: './photo-details-page.component.scss',
 })
 export class PhotoDetailsPageComponent implements OnInit, OnDestroy {
   public readonly getImage: GetImage;
-  public readonly getTitle: GetPhotoTitle;
+  public readonly getTitle: GetTitle;
   public readonly photoMetadata$ = new BehaviorSubject<
     PhotoMetadata | undefined
   >(undefined);
@@ -34,12 +29,14 @@ export class PhotoDetailsPageComponent implements OnInit, OnDestroy {
   private readonly subs: Subscription[] = [];
 
   constructor(
-    private readonly photosService: PhotosService,
+    private readonly sharedPhotosService: SharedPhotosService,
+    private readonly photosApiService: PhotosApiService,
     private readonly router: Router
   ) {
-    this.getImage = this.photosService.getImage;
-    this.getTitle = (photoMetadata: PhotoMetadata) =>
-      this.photosService.getTitle(photoMetadata.titles);
+    this.getImage = this.sharedPhotosService.getImageFactory(
+      this.photosApiService.getImageBuffer
+    );
+    this.getTitle = this.sharedPhotosService.getTitle;
     const photoMetadata = this.router.getCurrentNavigation()?.extras
       .state as PhotoMetadata;
     if (photoMetadata) {
@@ -72,13 +69,13 @@ export class PhotoDetailsPageComponent implements OnInit, OnDestroy {
     if (!photoId) {
       return;
     }
-    const photo = await this.photosService.getImage(photoId);
+    const photo = await this.getImage(photoId);
     this.photo$.next(photo);
   };
 
   private readonly setTitle = () => {
     const photoMetadata = this.photoMetadata$.getValue();
-    const title = this.photosService.getTitle(photoMetadata?.titles);
+    const title = photoMetadata ? this.getTitle(photoMetadata) : undefined;
     this.title$.next(title);
   };
 }

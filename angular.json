@@ -151,7 +151,10 @@
               "projects/phoga-back-office/src/favicon.ico",
               "projects/phoga-back-office/src/assets"
             ],
-            "styles": ["projects/phoga-back-office/src/styles.scss"],
+            "styles": [
+              "@angular/material/prebuilt-themes/indigo-pink.css",
+              "projects/phoga-back-office/src/styles.scss"
+            ],
             "scripts": []
           },
           "configurations": {

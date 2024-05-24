@@ -8,17 +8,24 @@ export interface PhotoImage extends Pick<PhotoMetadata, '_id'> {
 
 export type Photo = PhotoMetadata & PhotoImage;
 
-export type FetchPhotosMetadata = (
+export type GetRedirectLink = (photoMetadata: PhotoMetadata) => string;
+
+export type GetTitle = (photoMetadata: PhotoMetadata) => string | undefined;
+
+export type GetPhotosMetadata = (
   filter?: PhotoMetadataFilter
 ) => Observable<PhotoMetadata[]>;
 
-export type GetPhotoRedirectLink = (photoMetadata: PhotoMetadata) => string;
+export type GetPhotoMetadata = (
+  _id: Photo['_id']
+) => Promise<PhotoMetadata | undefined>;
 
 export type GetImage = (
-  photoId: PhotoMetadata['_id'],
+  photoId: Photo['_id'],
   format?: PhotoFormatOptions
 ) => Promise<string | undefined>;
 
-export type GetPhotoTitle = (
-  photoMetadata: PhotoMetadata
-) => string | undefined;
+export type ImageBufferGetter = (
+  photoId: Photo['_id'],
+  formatOptions?: PhotoFormatOptions
+) => Observable<ArrayBuffer>;

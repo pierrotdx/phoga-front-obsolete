@@ -12,10 +12,10 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatInput, MatLabel } from '@angular/material/input';
 import { ExifData, ExifParserFactory } from 'ts-exif-parser';
 import {
-  PhotoUtilsService,
   PhotoGeoLocation,
   PhotoMetadata,
   Photo,
+  SharedPhotoUtilsService,
 } from 'phoga-shared';
 import { BehaviorSubject, ReplaySubject, Subscription } from 'rxjs';
 import { isEmpty } from 'ramda';
@@ -49,7 +49,9 @@ export class EditPhotoFormComponent implements OnInit, OnDestroy {
 
   private readonly subs: Subscription[] = [];
 
-  constructor(private readonly photoUtilsService: PhotoUtilsService) {}
+  constructor(
+    private readonly sharedPhotoUtilsService: SharedPhotoUtilsService
+  ) {}
 
   ngOnInit(): void {}
 
@@ -116,7 +118,9 @@ export class EditPhotoFormComponent implements OnInit, OnDestroy {
     date.toISOString().substring(0, 10);
 
   private readonly setImage = async (imageBuffer: ArrayBuffer) => {
-    const image = await this.photoUtilsService.getImagePromise(imageBuffer);
+    const image = await this.sharedPhotoUtilsService.getImagePromise(
+      imageBuffer
+    );
     this.image$.next(image);
   };
 
@@ -132,7 +136,7 @@ export class EditPhotoFormComponent implements OnInit, OnDestroy {
       this.thumbnail$.next(undefined);
       return;
     }
-    const thumbnailImage = await this.photoUtilsService.getImagePromise(
+    const thumbnailImage = await this.sharedPhotoUtilsService.getImagePromise(
       thumbnailBuffer
     );
     this.thumbnail$.next(thumbnailImage);

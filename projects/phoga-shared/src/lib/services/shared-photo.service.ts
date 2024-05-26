@@ -1,12 +1,4 @@
 import { Injectable } from '@angular/core';
-import {
-  PhotoFormatOptions,
-  PhotoImage,
-  PhotoMetadata,
-  PhotoMetadataFilter,
-  SharedCacheService,
-  SharedPhotoUtilsService,
-} from 'phoga-shared';
 import { firstValueFrom, of, tap } from 'rxjs';
 import {
   ImageBufferGetter,
@@ -15,7 +7,12 @@ import {
   GetPhotoMetadata,
   GetPhotosMetadata,
   GetTitle,
+  PhotoMetadataFilter,
+  PhotoMetadata,
+  PhotoFormatOptions,
+  PhotoImage,
 } from '../models';
+import { SharedCacheService, SharedPhotoUtilsService } from '.';
 
 @Injectable({
   providedIn: 'root',

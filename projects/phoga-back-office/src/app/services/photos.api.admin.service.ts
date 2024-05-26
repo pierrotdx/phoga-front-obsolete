@@ -25,7 +25,16 @@ export class PhotosApiAdminService {
   createPhoto = (photo: Partial<Photo & { file: File }>) => {
     const url = new URL(`${this.apiUrl}/photos`);
     const formData = this.getFormDataToCreatePhoto(photo);
+    if (!formData.has('file')) {
+      throw new Error('there is no image to send');
+    }
     return this.httpClient.put<unknown>(url.toString(), formData);
+  };
+
+  patchPhoto = (photo: Partial<Photo & { file: File }>) => {
+    const url = new URL(`${this.apiUrl}/photos/${photo._id}`);
+    const formData = this.getFormDataToCreatePhoto(photo);
+    return this.httpClient.patch<unknown>(url.toString(), formData);
   };
 
   private readonly getFormDataToCreatePhoto = (
@@ -34,8 +43,6 @@ export class PhotosApiAdminService {
     const formData = new FormData();
     if (photo.file) {
       formData.append('file', photo.file);
-    } else {
-      throw new Error('there is no image to send');
     }
     if (photo.geoLocation?.latitude && photo.geoLocation?.longitude) {
       formData.append('latitude', photo.geoLocation.latitude?.toString());

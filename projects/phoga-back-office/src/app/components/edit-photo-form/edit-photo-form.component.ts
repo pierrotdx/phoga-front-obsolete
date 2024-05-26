@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import {
   Component,
   EventEmitter,
@@ -15,10 +15,20 @@ import {
   PhotoGeoLocation,
   PhotoMetadata,
   Photo,
+  SharedPhotosService,
   SharedPhotoUtilsService,
+  GetImage,
 } from 'phoga-shared';
-import { BehaviorSubject, ReplaySubject, Subscription } from 'rxjs';
+import {
+  BehaviorSubject,
+  Subscription,
+  combineLatest,
+  firstValueFrom,
+  filter,
+} from 'rxjs';
 import { isEmpty } from 'ramda';
+import { Router } from '@angular/router';
+import { PhotosApiAdminService } from '../../services';
 
 @Component({
   selector: 'app-edit-photo-form',
@@ -37,11 +47,19 @@ import { isEmpty } from 'ramda';
 export class EditPhotoFormComponent implements OnInit, OnDestroy {
   @Output() save = new EventEmitter<Partial<Photo | undefined>>();
 
+  private readonly getImage: GetImage;
+
   public readonly image$ = new BehaviorSubject<string | undefined>(undefined);
   public readonly file$ = new BehaviorSubject<File | undefined>(undefined);
-  public readonly thumbnail$ = new ReplaySubject<string | undefined>();
+  public readonly thumbnail$ = new BehaviorSubject<string | undefined>(
+    undefined
+  );
   public readonly showImage$ = new BehaviorSubject<boolean>(false);
+  public readonly imageToDisplay$ = new BehaviorSubject<string | undefined>(
+    undefined
+  );
 
+  public photoId: Photo['_id'] | undefined;
   public photoDate: string = '';
   public photoDescription: string = '';
   public photoGeoLocation: PhotoGeoLocation = {};
@@ -50,10 +68,23 @@ export class EditPhotoFormComponent implements OnInit, OnDestroy {
   private readonly subs: Subscription[] = [];
 
   constructor(
+    private readonly location: Location,
+    private readonly photosApiAdminService: PhotosApiAdminService,
+    private readonly router: Router,
+    private readonly sharedPhotosService: SharedPhotosService,
     private readonly sharedPhotoUtilsService: SharedPhotoUtilsService
-  ) {}
+  ) {
+    this.getImage = this.sharedPhotosService.getImageFactory(
+      this.photosApiAdminService.getImageBuffer
+    );
+    const photoMetadata = this.router.getCurrentNavigation()?.extras
+      .state as PhotoMetadata;
+    this.initForm(photoMetadata);
+  }
 
-  ngOnInit(): void {}
+  ngOnInit() {
+    void this.setImageToDisplay();
+  }
 
   ngOnDestroy(): void {
     this.subs.forEach((sub) => {
@@ -61,13 +92,55 @@ export class EditPhotoFormComponent implements OnInit, OnDestroy {
     });
   }
 
-  onSubmit = () => {
-    const file = this.file$.getValue();
-    if (!file) {
-      this.save.emit(undefined);
+  private readonly setImageToDisplay = async () => {
+    const initImageToDisplay$ = combineLatest([
+      this.image$,
+      this.thumbnail$,
+    ]).pipe(filter(([image, thumbnail]) => !!image || !!thumbnail));
+    const [image, thumbnail] = await firstValueFrom(initImageToDisplay$);
+    const imageToDisplay = thumbnail ?? image;
+    this.imageToDisplay$.next(imageToDisplay);
+  };
+
+  private readonly initForm = (photoMetadata: PhotoMetadata) => {
+    const isNewPhoto = !photoMetadata?._id;
+    if (isNewPhoto) {
       return;
     }
-    const photo: Partial<Photo & { file: File }> = { file };
+    this.photoId = photoMetadata._id;
+    if (photoMetadata.date) {
+      this.photoDate =
+        photoMetadata.date instanceof Date
+          ? this.getInputCompatibleStringDateFromDate(photoMetadata.date)
+          : this.getInputCompatibleStringDateFromDate(
+              new Date(photoMetadata.date)
+            );
+    }
+    if (photoMetadata.description) {
+      this.photoDescription = photoMetadata.description;
+    }
+    if (photoMetadata.titles) {
+      this.photoTitles = photoMetadata.titles;
+    }
+    if (
+      photoMetadata.geoLocation?.latitude &&
+      photoMetadata.geoLocation?.longitude
+    ) {
+      this.photoGeoLocation = photoMetadata.geoLocation;
+    }
+    void this.initThumbnail(photoMetadata._id);
+    void this.initImage(photoMetadata._id);
+  };
+
+  onSubmit = () => {
+    const photo: Partial<Photo & { file: File }> = {};
+    if (this.photoId) {
+      photo._id = this.photoId;
+    }
+    const file = this.file$.getValue();
+    if (file) {
+      photo.file = file;
+    }
     const date = this.photoDate ? new Date(this.photoDate) : undefined;
     if (date) {
       photo.date = date;
@@ -100,7 +173,7 @@ export class EditPhotoFormComponent implements OnInit, OnDestroy {
     }
     this.file$.next(file);
     const imageBuffer = await file.arrayBuffer();
-    void this.setImage(imageBuffer);
+    await this.setImage(imageBuffer);
     const exifData = this.getExifData(imageBuffer);
     const metadata = this.getMetadata(exifData);
     if (metadata.date instanceof Date) {
@@ -111,11 +184,12 @@ export class EditPhotoFormComponent implements OnInit, OnDestroy {
     if (metadata.geoLocation) {
       this.photoGeoLocation = metadata.geoLocation;
     }
-    void this.setThumbnail(exifData);
+    await this.setThumbnail(exifData);
+    await this.setImageToDisplay();
   };
 
   private readonly getInputCompatibleStringDateFromDate = (date: Date) =>
-    date.toISOString().substring(0, 10);
+    date?.toISOString().substring(0, 10);
 
   private readonly setImage = async (imageBuffer: ArrayBuffer) => {
     const image = await this.sharedPhotoUtilsService.getImagePromise(
@@ -130,20 +204,39 @@ export class EditPhotoFormComponent implements OnInit, OnDestroy {
     return exifData;
   }
 
+  private readonly initThumbnail = async (photoId: Photo['_id']) => {
+    const thumbnail = await this.getImage(photoId, { width: 400, height: 400 });
+    this.thumbnail$.next(thumbnail);
+  };
+
   private readonly setThumbnail = async (exifData?: ExifData) => {
     const thumbnailBuffer = exifData?.getThumbnailBuffer();
-    if (!thumbnailBuffer) {
+    if (!thumbnailBuffer || thumbnailBuffer.byteLength === 0) {
       this.thumbnail$.next(undefined);
+      this.showImage$.next(true);
       return;
     }
-    const thumbnailImage = await this.sharedPhotoUtilsService.getImagePromise(
+    const thumbnail = await this.sharedPhotoUtilsService.getImagePromise(
       thumbnailBuffer
     );
-    this.thumbnail$.next(thumbnailImage);
+    this.thumbnail$.next(thumbnail);
+    this.showImage$.next(false);
+  };
+
+  private readonly initImage = async (photoId: Photo['_id']) => {
+    const image = await this.getImage(photoId);
+    this.image$.next(image);
   };
 
   public readonly toggleImage = () => {
     const showImage = this.showImage$.getValue();
+    const thumbnail = this.thumbnail$.getValue();
+    if (showImage || !thumbnail) {
+      const image = this.image$.getValue();
+      this.imageToDisplay$.next(image);
+    } else {
+      this.imageToDisplay$.next(thumbnail);
+    }
     this.showImage$.next(!showImage);
   };
 
@@ -181,5 +274,9 @@ export class EditPhotoFormComponent implements OnInit, OnDestroy {
     if (this.photoTitles[index]) {
       this.photoTitles.splice(index, 1);
     }
+  };
+
+  public readonly cancel = () => {
+    this.location.back();
   };
 }

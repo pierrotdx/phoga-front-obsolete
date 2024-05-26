@@ -19,6 +19,10 @@ export class EditPhotoPageComponent {
     if (!savedPhoto) {
       return;
     }
-    await firstValueFrom(this.photosApiAdminService.createPhoto(savedPhoto));
+    if (savedPhoto._id) {
+      await firstValueFrom(this.photosApiAdminService.patchPhoto(savedPhoto));
+    } else {
+      await firstValueFrom(this.photosApiAdminService.createPhoto(savedPhoto));
+    }
   };
 }

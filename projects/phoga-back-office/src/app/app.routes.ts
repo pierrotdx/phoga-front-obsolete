@@ -11,4 +11,13 @@ const addPhotoPageRoute: Route = {
   component: EditPhotoPageComponent,
 };
 
-export const routes: Routes = [editGalleryPageRoute, addPhotoPageRoute];
+const editPhotoPageRoute: Route = {
+  path: ':photoId/edit',
+  component: EditPhotoPageComponent,
+};
+
+export const routes: Routes = [
+  editGalleryPageRoute,
+  editPhotoPageRoute,
+  addPhotoPageRoute,
+];

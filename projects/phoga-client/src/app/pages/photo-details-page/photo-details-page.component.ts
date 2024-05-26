@@ -5,7 +5,6 @@ import { GetImage, GetTitle, PhotoMetadata } from 'phoga-shared';
 import { PhotosApiService, SharedPhotosService } from '../../services';
 import { CommonModule } from '@angular/common';
 import { DisplayPhotoComponent } from '../../components';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({

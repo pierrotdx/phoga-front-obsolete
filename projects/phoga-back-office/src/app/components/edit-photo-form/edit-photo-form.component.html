@@ -1,4 +1,13 @@
 <form (ngSubmit)="onSubmit()" #editPhotoForm="ngForm">
+  <div
+    *ngIf="imageToDisplay$ | async as imageToDisplay"
+    (click)="toggleImage()"
+  >
+    <img
+      [src]="imageToDisplay"
+      alt="image or thumbnail should be displayed here"
+    />
+  </div>
   <label for="image">
     Image
     <input
@@ -8,20 +17,6 @@
       accept="image/jpeg"
     />
   </label>
-  <div (click)="toggleImage()">
-    <img
-      *ngIf="(showImage$ | async) && (image$ | async) as image"
-      [src]="image"
-      alt="image should be displayed here"
-    />
-    <img
-      *ngIf="
-        (showImage$ | async) === false && (thumbnail$ | async) as thumbnail
-      "
-      [src]="thumbnail"
-      alt="thumbnail should be displayed here"
-    />
-  </div>
   <div>
     <label for="photoDateCtrlId">Date</label>
     <input
@@ -74,4 +69,5 @@
     </textarea>
   </div>
   <button type="submit">submit</button>
+  <button type="button" (click)="cancel()">cancel</button>
 </form>

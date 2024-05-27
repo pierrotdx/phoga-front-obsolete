@@ -73,4 +73,9 @@ export class PhotosApiAdminService {
       responseType: 'arraybuffer',
     });
   };
+
+  deletePhoto = (photoId: string) => {
+    const url = new URL(`${this.apiUrl}/photos/${photoId}`);
+    return this.httpClient.delete<boolean>(url.toString());
+  };
 }

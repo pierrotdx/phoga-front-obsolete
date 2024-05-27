@@ -46,6 +46,7 @@ import { PhotosApiAdminService } from '../../services';
 })
 export class EditPhotoFormComponent implements OnInit, OnDestroy {
   @Output() save = new EventEmitter<Partial<Photo | undefined>>();
+  @Output() delete = new EventEmitter<Photo['_id']>();
 
   private readonly getImage: GetImage;
 
@@ -278,5 +279,13 @@ export class EditPhotoFormComponent implements OnInit, OnDestroy {
 
   public readonly cancel = () => {
     this.location.back();
+  };
+
+  public readonly onDelete = async () => {
+    if (this.photoId) {
+      this.delete.emit(this.photoId);
+    } else {
+      throw new Error('delete failed: no photo id provided');
+    }
   };
 }

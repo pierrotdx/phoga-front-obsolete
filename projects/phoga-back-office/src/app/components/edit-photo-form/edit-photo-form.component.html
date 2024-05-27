@@ -71,3 +71,8 @@
   <button type="submit">submit</button>
   <button type="button" (click)="cancel()">cancel</button>
 </form>
+<div *ngIf="photoId">
+  <button type="button" style="background-color: red" (click)="onDelete()">
+    delete
+  </button>
+</div>

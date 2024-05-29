@@ -1,13 +1,23 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, ReplaySubject, Subscription } from 'rxjs';
+import {
+  BehaviorSubject,
+  ReplaySubject,
+  Subscription,
+  firstValueFrom,
+  map,
+  switchMap,
+} from 'rxjs';
 import {
   DisplayPhotoComponent,
   GetImage,
   GetTitle,
+  Photo,
+  PhotoFormatOptions,
   PhotoMetadata,
+  SharedPhotoUtilsService,
 } from 'phoga-shared';
-import { PhotosApiService, SharedPhotosService } from '../../services';
+import { PhotosApiService } from '../../services';
 import { CommonModule } from '@angular/common';
 
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -33,14 +43,14 @@ export class PhotoDetailsPageComponent implements OnInit, OnDestroy {
   private readonly subs: Subscription[] = [];
 
   constructor(
-    private readonly sharedPhotosService: SharedPhotosService,
     private readonly photosApiService: PhotosApiService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly sharedPhotoUtilsService: SharedPhotoUtilsService
   ) {
-    this.getImage = this.sharedPhotosService.getImageFactory(
+    this.getImage = this.sharedPhotoUtilsService.initGetImage(
       this.photosApiService.getImageBuffer
     );
-    this.getTitle = this.sharedPhotosService.getTitle;
+    this.getTitle = this.sharedPhotoUtilsService.getTitle;
     const photoMetadata = this.router.getCurrentNavigation()?.extras
       .state as PhotoMetadata;
     if (photoMetadata) {

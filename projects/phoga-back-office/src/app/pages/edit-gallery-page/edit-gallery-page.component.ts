@@ -6,9 +6,9 @@ import {
   GetPhotosMetadata,
   GetRedirectLink,
   PhotoMetadata,
+  SharedPhotoUtilsService,
 } from 'phoga-shared';
 import { PhotosApiAdminService } from '../../services';
-import { SharedPhotosService } from '../../../../../phoga-client/src/app/services';
 
 @Component({
   selector: 'app-edit-gallery-page',
@@ -24,15 +24,13 @@ export class EditGalleryPageComponent {
 
   constructor(
     private readonly photosApiAdminService: PhotosApiAdminService,
-    private readonly sharedPhotoService: SharedPhotosService
+    private readonly sharedPhotoUtilsService: SharedPhotoUtilsService
   ) {
-    this.getPhotosMetadata = this.sharedPhotoService.getPhotosMetadataFactory(
-      this.photosApiAdminService.getPhotosMetadata
-    );
-    this.getImage = this.sharedPhotoService.getImageFactory(
+    this.getPhotosMetadata = this.photosApiAdminService.getPhotosMetadata;
+    this.getImage = this.sharedPhotoUtilsService.initGetImage(
       this.photosApiAdminService.getImageBuffer
     );
-    this.getTitle = this.sharedPhotoService.getTitle;
+    this.getTitle = this.sharedPhotoUtilsService.getTitle;
     this.getPhotoRedirectLink = (photoMetadata: PhotoMetadata) =>
       `${photoMetadata._id}/edit`;
   }

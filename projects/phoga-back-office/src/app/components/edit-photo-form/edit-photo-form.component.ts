@@ -15,7 +15,6 @@ import {
   PhotoGeoLocation,
   PhotoMetadata,
   Photo,
-  SharedPhotosService,
   SharedPhotoUtilsService,
   GetImage,
 } from 'phoga-shared';
@@ -72,10 +71,9 @@ export class EditPhotoFormComponent implements OnInit, OnDestroy {
     private readonly location: Location,
     private readonly photosApiAdminService: PhotosApiAdminService,
     private readonly router: Router,
-    private readonly sharedPhotosService: SharedPhotosService,
     private readonly sharedPhotoUtilsService: SharedPhotoUtilsService
   ) {
-    this.getImage = this.sharedPhotosService.getImageFactory(
+    this.getImage = this.sharedPhotoUtilsService.initGetImage(
       this.photosApiAdminService.getImageBuffer
     );
     const photoMetadata = this.router.getCurrentNavigation()?.extras

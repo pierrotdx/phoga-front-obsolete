@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { PhotosApiService, SharedPhotosService } from '../../services';
+import { PhotosApiService } from '../../services';
 import {
   GetPhotosMetadata,
   GalleryComponent,
@@ -7,6 +7,7 @@ import {
   GetRedirectLink,
   GetTitle,
   PhotoMetadata,
+  SharedPhotoUtilsService,
 } from 'phoga-shared';
 
 @Component({
@@ -24,16 +25,14 @@ export class SearchPageComponent {
 
   constructor(
     private readonly photosApiService: PhotosApiService,
-    private readonly sharedPhotosService: SharedPhotosService
+    private readonly sharedPhotoUtilsService: SharedPhotoUtilsService
   ) {
-    this.getPhotosMetadata = this.sharedPhotosService.getPhotosMetadataFactory(
-      this.photosApiService.getPhotosMetadata
-    );
+    this.getPhotosMetadata = this.photosApiService.getPhotosMetadata;
     this.getPhotoRedirectLink = (photoMetadata: PhotoMetadata) =>
       `${photoMetadata._id}/details`;
-    this.getImage = this.sharedPhotosService.getImageFactory(
+    this.getImage = this.sharedPhotoUtilsService.initGetImage(
       this.photosApiService.getImageBuffer
     );
-    this.getTitle = this.sharedPhotosService.getTitle;
+    this.getTitle = this.sharedPhotoUtilsService.getTitle;
   }
 }

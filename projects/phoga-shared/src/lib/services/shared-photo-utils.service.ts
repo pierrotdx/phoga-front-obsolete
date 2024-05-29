@@ -1,4 +1,13 @@
 import { Injectable } from '@angular/core';
+import {
+  GetImage,
+  GetTitle,
+  ImageBufferGetter,
+  Photo,
+  PhotoFormatOptions,
+  PhotoMetadata,
+} from '../models';
+import { firstValueFrom, switchMap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -35,4 +44,22 @@ export class SharedPhotoUtilsService {
       url.searchParams.set(encodeURIComponent(key), encodeURIComponent(value));
     });
   };
+
+  private readonly getImageFromBuffer = async (imageBuffer: ArrayBuffer) => {
+    const image = await this.getImagePromise(imageBuffer);
+    return image;
+  };
+
+  public readonly getTitle: GetTitle = (photoMetadata?: PhotoMetadata) =>
+    photoMetadata?.titles?.map((title) => `"${title}"`)?.join(', ');
+
+  public readonly initGetImage =
+    (imageBufferGetter: ImageBufferGetter): GetImage =>
+    (photoId: Photo['_id'], format?: PhotoFormatOptions) => {
+      const imageBuffer$ = imageBufferGetter(photoId, format);
+      const image$ = imageBuffer$.pipe(
+        switchMap((buffer) => this.getImageFromBuffer(buffer))
+      );
+      return firstValueFrom(image$);
+    };
 }

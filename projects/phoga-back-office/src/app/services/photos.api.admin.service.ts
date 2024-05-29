@@ -8,6 +8,7 @@ import {
   PhotoMetadataFilter,
   SharedPhotoUtilsService,
 } from 'phoga-shared';
+import { tap } from 'ramda';
 
 @Injectable({
   providedIn: 'root',
@@ -28,13 +29,13 @@ export class PhotosApiAdminService {
     if (!formData.has('file')) {
       throw new Error('there is no image to send');
     }
-    return this.httpClient.put<unknown>(url.toString(), formData);
+    return this.httpClient.put<boolean>(url.toString(), formData);
   };
 
   patchPhoto = (photo: Partial<Photo & { file: File }>) => {
     const url = new URL(`${this.apiUrl}/photos/${photo._id}`);
     const formData = this.getFormDataToCreatePhoto(photo);
-    return this.httpClient.patch<unknown>(url.toString(), formData);
+    return this.httpClient.patch<boolean>(url.toString(), formData);
   };
 
   private readonly getFormDataToCreatePhoto = (

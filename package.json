@@ -23,6 +23,7 @@
     "@angular/platform-browser": "^17.3.0",
     "@angular/platform-browser-dynamic": "^17.3.0",
     "@angular/router": "^17.3.0",
+    "@auth0/auth0-angular": "^2.2.3",
     "ramda": "^0.29.1",
     "rxjs": "~7.8.0",
     "ts-exif-parser": "^0.2.2",

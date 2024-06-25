@@ -8,23 +8,24 @@ import {
   PhotoMetadataFilter,
   SharedPhotoUtilsService,
 } from 'phoga-shared';
-import { tap } from 'ramda';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PhotosApiAdminService {
   private readonly apiUrl: string;
+  private readonly adminApiUrl: string;
 
   constructor(
     private readonly httpClient: HttpClient,
     private readonly sharedPhotoUtilsService: SharedPhotoUtilsService
   ) {
     this.apiUrl = environment.publicApiUrl;
+    this.adminApiUrl = `${this.apiUrl}/restricted`;
   }
 
   createPhoto = (photo: Partial<Photo & { file: File }>) => {
-    const url = new URL(`${this.apiUrl}/photos`);
+    const url = new URL(`${this.adminApiUrl}/photos`);
     const formData = this.getFormDataToCreatePhoto(photo);
     if (!formData.has('file')) {
       throw new Error('there is no image to send');
@@ -33,7 +34,7 @@ export class PhotosApiAdminService {
   };
 
   patchPhoto = (photo: Partial<Photo & { file: File }>) => {
-    const url = new URL(`${this.apiUrl}/photos/${photo._id}`);
+    const url = new URL(`${this.adminApiUrl}/photos/${photo._id}`);
     const formData = this.getFormDataToCreatePhoto(photo);
     return this.httpClient.patch<boolean>(url.toString(), formData);
   };
@@ -76,7 +77,7 @@ export class PhotosApiAdminService {
   };
 
   deletePhoto = (photoId: string) => {
-    const url = new URL(`${this.apiUrl}/photos/${photoId}`);
+    const url = new URL(`${this.adminApiUrl}/photos/${photoId}`);
     return this.httpClient.delete<boolean>(url.toString());
   };
 }

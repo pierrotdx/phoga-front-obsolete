@@ -6,7 +6,7 @@ import {
   HttpResponse,
 } from '@angular/common/http';
 import { Observable, of, tap } from 'rxjs';
-import { SharedEnvironment } from './models';
+import { SharedEnvironment } from '../models';
 
 enum ApiEndpoint {
   Photos = 'photos',

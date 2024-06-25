@@ -1,18 +1,49 @@
 <mat-toolbar role="heading" aria-label="header toolbar">
   <mat-toolbar-row>
-    <nav>
-      <ul>
+    <nav style="flex: 1 1 auto">
+      <ul style="display: flex; justify-content: space-evenly">
         <li>
           <a routerLink="/" routerLinkActive ariaCurrentWhenActive="page">
             Home
           </a>
         </li>
-        <li>
-          <a routerLink="/add" routerLinkActive ariaCurrentWhenActive="page">
-            Add
-          </a>
-        </li>
+        <span *ngIf="(isAuthenticated$ | async) === true">
+          <li>
+            <a
+              routerLink="/restricted"
+              routerLinkActive
+              ariaCurrentWhenActive="page"
+            >
+              Restricted
+            </a>
+          </li>
+          <li>
+            <a
+              routerLink="restricted/add"
+              routerLinkActive
+              ariaCurrentWhenActive="page"
+            >
+              Add
+            </a>
+          </li>
+        </span>
       </ul>
     </nav>
+    <div>
+      <button
+        *ngIf="(isAuthenticated$ | async) === false"
+        type="button"
+        (click)="login()"
+      >
+        Login
+      </button>
+      <button
+        *ngIf="(isAuthenticated$ | async) === true"
+        type="button"
+        (click)="logout()"
+      >
+        Logout
+      </button>
+    </div>
   </mat-toolbar-row>
 </mat-toolbar>

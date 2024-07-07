@@ -15,7 +15,7 @@ import { firstValueFrom } from 'rxjs/internal/firstValueFrom';
   providedIn: 'root',
 })
 export class AuthenticationService {
-  public readonly accessToken$ = new BehaviorSubject<string>('');
+  private readonly accessToken$ = new BehaviorSubject<string>('');
   public readonly isAuthenticated$ = new ReplaySubject<boolean>();
   public readonly user$ = new ReplaySubject<User | null | undefined>();
 
@@ -85,7 +85,6 @@ export class AuthenticationService {
         : await firstValueFrom(this.isAuthenticated$);
     if (!isLoggedIn) {
       await this.loginWithRedirect();
-      return;
     }
     const accessToken = await firstValueFrom(
       this.authService.getAccessTokenSilently()

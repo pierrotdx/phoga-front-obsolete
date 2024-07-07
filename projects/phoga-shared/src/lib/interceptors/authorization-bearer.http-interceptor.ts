@@ -4,19 +4,15 @@ import {
   HttpInterceptor,
   HttpRequest,
 } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Observable, from, map, switchMap } from 'rxjs';
 import { AuthenticationService } from '../services/authentication.service';
 import { Injectable } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class AuthorizationBearerInterceptor implements HttpInterceptor {
-  private accessToken$: BehaviorSubject<string>;
-
   private readonly AdminUrlFragment = '/restricted';
 
-  constructor(private readonly authenticationService: AuthenticationService) {
-    this.accessToken$ = this.authenticationService.accessToken$;
-  }
+  constructor(private readonly authenticationService: AuthenticationService) {}
 
   intercept(
     req: HttpRequest<any>,
@@ -26,12 +22,23 @@ export class AuthorizationBearerInterceptor implements HttpInterceptor {
     if (!isAdminRoute) {
       return next.handle(req);
     }
-    const accessToken = this.accessToken$.getValue();
+
+    const accessToken$ = from(this.authenticationService.getAccessToken());
+    return accessToken$.pipe(
+      map((accessToken) => this.getReqWithAuthBearer(req, accessToken)),
+      switchMap((reqWithAuthBearer) => next.handle(reqWithAuthBearer))
+    );
+  }
+
+  private readonly getReqWithAuthBearer = (
+    req: HttpRequest<any>,
+    accessToken: string
+  ): HttpRequest<any> => {
     const headers = req.headers.append(
       'Authorization',
       `Bearer ${accessToken}`
     );
     const authReq = req.clone({ headers });
-    return next.handle(authReq);
-  }
+    return authReq;
+  };
 }
